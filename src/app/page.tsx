@@ -1,5 +1,5 @@
-import Homa from "./componets/Homa";
-import Teste from "./componets/Teste";
+import Homa from "../componets/Homa";
+import Teste from "../componets/Teste";
 
 export default function Home() {
   return (

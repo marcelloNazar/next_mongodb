@@ -2,6 +2,7 @@ import { AuthProvider } from "@/componets/providers/AuthProvider";
 import "./globals.css";
 import type { Metadata } from "next";
 import { Lora, Nunito } from "next/font/google";
+import Header from "@/componets/Header";
 
 const lora = Lora({
   subsets: ["latin"],
@@ -28,7 +29,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <AuthProvider>
-        <body className={`${lora.variable}${nunito.variable}`}>{children}</body>
+        <body className={`${lora.variable}${nunito.variable}`}>
+          <div className="h-screen overflow-hidden">
+            <Header />
+            {children}
+          </div>
+        </body>
       </AuthProvider>
     </html>
   );

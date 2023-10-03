@@ -1,41 +1,65 @@
+"use client";
+
+import Link from "next/link";
+import React from "react";
+import { signOut, useSession } from "next-auth/react";
+
 export default function Header() {
+  const links = [
+    {
+      id: 1,
+      title: "Home",
+      url: "/",
+    },
+    {
+      id: 2,
+      title: "Portfolio",
+      url: "/finances",
+    },
+    {
+      id: 3,
+      title: "Blog",
+      url: "/blog",
+    },
+    {
+      id: 4,
+      title: "About",
+      url: "/about",
+    },
+    {
+      id: 5,
+      title: "Contact",
+      url: "/contact",
+    },
+    {
+      id: 6,
+      title: "Dashboard",
+      url: "/dashboard",
+    },
+  ];
+  const session = useSession();
+
   return (
-    <div className="flex text-sm font-medium text-center text-gray-500 border-b border-gray-200 w-screen items-center justify-center absolute ">
-      <ul className="flex flex-wrap -mb-px">
-        <li className="mr-2">
-          <a
-            href="#"
-            className="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 "
+    <div className="flex bg-blue-500 w-full h-1/4 justify-between items-center">
+      <Link href="/" className="font-bold text-xl">
+        Marcello Nazar
+      </Link>
+      <div className="flex items-center gap-4">
+        {links.map((link) => (
+          <Link
+            key={link.id}
+            href={link.url}
+            className=""
           >
-            Home
-          </a>
-        </li>
-        <li className="mr-2">
-          <a
-            href="#"
-            className="inline-block p-4 text-purple-600 border-b-2 border-purple-600 rounded-t-lg active "
-            aria-current="page"
-          >
-            Calendar
-          </a>
-        </li>
-        <li className="mr-2">
-          <a
-            href="#"
-            className="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 "
-          >
-            Results
-          </a>
-        </li>
-        <li className="mr-2">
-          <a
-            href="#"
-            className="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 "
-          >
-            Live
-          </a>
-        </li>
-      </ul>
+            {link.title}
+          </Link>
+        ))}
+        {session.status === "authenticated" && (
+          <button className="btn" onClick={() => signOut()}>
+            logout
+          </button>
+        )}
+      </div>
     </div>
   );
 }

@@ -1,11 +1,5 @@
-import Homa from "../componets/Homa";
-import Teste from "../componets/Teste";
+
 
 export default function Home() {
-  return (
-    <main className="container mx-auto">
-      <Homa />
-      <Teste />
-    </main>
-  );
+  return <main className="container mx-auto bg-red-500">oi</main>;
 }

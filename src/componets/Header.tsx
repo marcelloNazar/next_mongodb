@@ -13,26 +13,12 @@ export default function Header() {
     },
     {
       id: 2,
-      title: "Portfolio",
+      title: "Financeiro",
       url: "/finances",
     },
+
     {
       id: 3,
-      title: "Blog",
-      url: "/blog",
-    },
-    {
-      id: 4,
-      title: "About",
-      url: "/about",
-    },
-    {
-      id: 5,
-      title: "Contact",
-      url: "/contact",
-    },
-    {
-      id: 6,
       title: "Dashboard",
       url: "/dashboard",
     },
@@ -40,17 +26,13 @@ export default function Header() {
   const session = useSession();
 
   return (
-    <div className="flex bg-blue-500 w-full h-1/4 justify-between items-center">
+    <div className="flex bg-blue-500 w-full py-2 justify-between items-center">
       <Link href="/" className="font-bold text-xl">
         Marcello Nazar
       </Link>
       <div className="flex items-center gap-4">
         {links.map((link) => (
-          <Link
-            key={link.id}
-            href={link.url}
-            className=""
-          >
+          <Link key={link.id} href={link.url} className="">
             {link.title}
           </Link>
         ))}

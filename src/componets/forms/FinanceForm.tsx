@@ -4,6 +4,13 @@ import { IFinance } from "@/interfaces/Post";
 import { FinanceResolver } from "@/utils/validators";
 import { useForm } from "react-hook-form";
 import Input from "../Input";
+import {
+  BsGraphDown,
+  BsGraphDownArrow,
+  BsGraphUp,
+  BsGraphUpArrow,
+} from "react-icons/bs";
+import ToggleSwitch from "../ToggleSwitch";
 
 type FinanceFormProps = {
   data?: Partial<IFinance>;
@@ -33,10 +40,10 @@ const FinanceForm: React.FC<FinanceFormProps> = ({ data = {}, formSubmit }) => {
 
   const title = watch("title");
   const category = watch("category");
+  const tipo = watch("tipo");
   const [valor, setValor] = useState(
     data.value ? data.value.toString().replace(".", ",") : ""
   );
-  const [tipo, setTipo] = useState(data.tipo || false);
 
   const handleSetData = (data: Partial<IFinance>) => {
     setValue("title", data.title || "");
@@ -50,6 +57,10 @@ const FinanceForm: React.FC<FinanceFormProps> = ({ data = {}, formSubmit }) => {
   }, [title]);
 
   useEffect(() => {
+    setValue("category", "");
+  }, [tipo]);
+
+  useEffect(() => {
     handleSetData(data);
   }, []);
 
@@ -57,7 +68,7 @@ const FinanceForm: React.FC<FinanceFormProps> = ({ data = {}, formSubmit }) => {
     formSubmit({
       title,
       category,
-      tipo,
+      tipo: values.tipo,
       value: Number(valor.replace(",", ".")),
     });
   };
@@ -75,8 +86,8 @@ const FinanceForm: React.FC<FinanceFormProps> = ({ data = {}, formSubmit }) => {
   };
 
   return (
-    <div className="modal-container justify-between">
-      <form onSubmit={handleSubmit(submitForm)} className="body-modal">
+    <div>
+      <form onSubmit={handleSubmit(submitForm)} className="flex flex-col gap-2">
         <Input
           type="text"
           {...register("title")}
@@ -92,33 +103,36 @@ const FinanceForm: React.FC<FinanceFormProps> = ({ data = {}, formSubmit }) => {
           onChange={(e) => handleValorChange(e.target.value)}
           error={errors?.value?.message}
         />
+        <Input type="date" />
+        <ToggleSwitch tipo={tipo} register={register} />
+
         <div className="w-full px-1">
           <select className="input" {...register("category")}>
             <option value="" className="dark:text-gray-600">
               Categoria
             </option>
-            <option value="Alimentação">Alimentação</option>
-            <option value="Gasolina">Gasolina</option>
+            {tipo ? (
+              <>
+                <option value="Salario">Salario</option>
+                <option value="Freelancer">Freelancer</option>
+              </>
+            ) : (
+              <>
+                {" "}
+                <option value="Alimentação">Alimentação</option>
+                <option value="Gasolina">Gasolina</option>
+              </>
+            )}
           </select>
           {errors?.category?.message && (
             <p className="text-xs text-red-600">{errors?.category?.message}</p>
           )}
         </div>
-        <div className="w-full p-1">
-          <label className="flex items-center justify-center">
-            <input
-              {...register("tipo")}
-              type="checkbox"
-              className="form-checkbox h-5 w-5 text-gray-600"
-              onChange={()=> setTipo(tipo!)}
-            />
-            <span className="ml-2 text-gray-700">Castrado</span>
-          </label>
-        </div>
+
         <button
           onClick={handleSubmit(submitForm)}
           type="submit"
-          className="btn"
+          className="btn w-full"
         >
           Adicionar
         </button>

@@ -5,6 +5,9 @@ import { fetchFinanceOnClient } from "../../utils/api";
 import { IFinance } from "@/interfaces/Post";
 import { useRouter } from "next/navigation";
 import FinanceForm from "@/componets/forms/FinanceForm";
+import Spinner from "@/componets/Spinner";
+import { BsGraphDownArrow, BsGraphUpArrow } from "react-icons/bs";
+import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 
 export default function Dashboard({ params }: any) {
   const session = useSession();
@@ -20,7 +23,15 @@ export default function Dashboard({ params }: any) {
     fetcher
   );
 
+  function numberToString(number?: number) {
+    const string = number?.toLocaleString("pt-BR", {
+      minimumFractionDigits: 2,
+    });
+    return string;
+  }
+
   const router = useRouter();
+  console.log(data);
 
   const handleSubmit = async (data: Partial<IFinance>) => {
     const title = data.title;
@@ -34,7 +45,7 @@ export default function Dashboard({ params }: any) {
         body: JSON.stringify({
           title,
           value,
-          type: tipo,
+          tipo: tipo,
           category,
           username: session.data!.user!.name,
         }),
@@ -56,43 +67,137 @@ export default function Dashboard({ params }: any) {
     }
   };
 
+  let totalEntradas = 0;
+  let totalSaidas = 0;
+
+  data?.forEach((teste: IFinance) => {
+    if (teste.tipo) {
+      // Se for uma entrada (teste.tipo === true), adicione ao total de entradas
+      totalEntradas += teste.value;
+    } else {
+      // Se for uma saída (teste.tipo === false), adicione ao total de saídas
+      totalSaidas += teste.value;
+    }
+  });
+
   if (session.status === "loading") {
-    return (
-      <div>
-        <div className="block p-4 m-auto bg-white rounded-lg shadow w-72">
-          <div className="w-full h-2 bg-gray-400 rounded-full mt-3">
-            <div className="w-3/4 h-full text-center text-xs text-white bg-green-500 rounded-full"></div>
-          </div>
-        </div>
-      </div>
-    );
+    return <Spinner />;
   }
   if (session.status === "unauthenticated") {
     router.push("/login");
   }
   if (session.status === "authenticated") {
     return (
-      <div className="page-container">
-        <div className="list-container">
-          {data?.map((teste: IFinance) => (
-            <div
-              className="flex w-full justify-between items-center border-b"
-              key={teste._id}
-            >
-              <div className="item-data w-5/12">{teste.title}</div>
-              <div className="item-data w-3/12">{teste.category}</div>
-              <div className="item-data w-2/12">{teste.value}</div>
-              <div className="item-data w-1/12">
-                {teste.tipo ? "entrada" : "saida"}
-              </div>
-              <div className="item-data w-1/12">
-                <div>editar</div>
-                <span onClick={() => handleDelete(teste._id)}>X</span>
-              </div>
-            </div>
-          ))}
+      <div className="page-container max-h-full">
+        <div className="w-full h-full relative overflow-x-hidden shadow-md sm:rounded-lg">
+          <table className="w-full h-full text-sm text-left text-gray-500 dark:text-gray-400 ">
+            <thead className="text-xs text-gray-700 uppercase dark:text-gray-400">
+              <tr>
+                <th
+                  scope="col"
+                  className="px-6 py-3 bg-gray-50 dark:bg-gray-800/50"
+                >
+                  Titulo
+                </th>
+                <th scope="col" className="px-6 py-3 w-12 dark:bg-gray-900/20">
+                  Tipo
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 bg-gray-50 dark:bg-gray-800/50"
+                >
+                  Categoria
+                </th>
+                <th scope="col" className="px-6 py-3 dark:bg-gray-900/20">
+                  Valor
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 bg-gray-50 dark:bg-gray-800/50 w-12"
+                >
+                  Editar
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {data?.map((teste: IFinance) => (
+                <tr
+                  key={teste._id}
+                  className="border-b border-gray-200 dark:border-gray-700"
+                >
+                  <th
+                    scope="row"
+                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50 dark:text-white dark:bg-gray-800/40"
+                  >
+                    {teste.title.length > 27
+                      ? teste.title.substring(0, 27) + "..."
+                      : teste.title}
+                  </th>
+                  <td className="px-6 py-4 justify-center">
+                    {teste.tipo ? (
+                      <div className="flex justify-center w-full font-bold text-xl text-green-600">
+                        <BsGraphUpArrow />
+                      </div>
+                    ) : (
+                      <div className="flex justify-center w-full font-bold text-xl text-red-600">
+                        <BsGraphDownArrow />
+                      </div>
+                    )}
+                  </td>
+                  <td className="px-6 py-4 bg-gray-50 dark:bg-gray-800/40">
+                    {teste.category}
+                  </td>
+                  <td className="px-6 py-4">
+                    R$ {numberToString(teste.value)}
+                  </td>
+                  <td className="px-6 py-4 bg-gray-50 dark:bg-gray-800/40">
+                    <div className="flex justify-center w-full font-bold text-xl gap-1">
+                      <button
+                        className=" hover:text-indigo-600"
+                        onClick={() => handleDelete(teste._id)}
+                      >
+                        <AiFillEdit />
+                      </button>
+                      <button
+                        className=" hover:text-red-600"
+                        onClick={() => handleDelete(teste._id)}
+                      >
+                        <AiFillDelete />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot className="h-full rounded-md">
+              <tr className="font-semibold text-gray-900 dark:text-white">
+                <th className="px-6 py-3 bg-gray-50 dark:bg-gray-800/40"></th>
+                <td className="px-6 py-3"></td>
+                <td className="px-6 py-3 bg-gray-50 dark:bg-gray-800/40"></td>
+                <td className="px-6 py-3"></td>
+                <td className="px-6 py-3 bg-gray-50 dark:bg-gray-800/40"></td>
+              </tr>
+            </tfoot>
+          </table>
         </div>
-        <div className="w-1/3">
+        <div className="flex flex-col h-full gap-2 w-1/3">
+          <div className="flex flex-col h-full w-full gap-2">
+            <div className="flex justify-center items-center flex-col w-full h-1/4 bg-green-500 dark:bg-gray-800/40 shadow-md rounded-lg"></div>
+
+            <div className="flex justify-start p-4 items-start flex-col w-full h-1/4 bg-green-500 dark:bg-gray-800/40 shadow-md rounded-lg">
+              <h1>Total Receitas:</h1>
+              <h1>R$ {numberToString(totalEntradas)}</h1>
+            </div>
+
+            <div className="flex justify-start p-4 items-start flex-col w-full h-1/4 bg-green-500 dark:bg-gray-800/40 shadow-md rounded-lg">
+              <h1>Total Despesas:</h1>
+              <h1>R$ {numberToString(totalSaidas)}</h1>
+            </div>
+            <div className="flex justify-start p-4 items-start flex-col w-full h-1/4 bg-green-500 dark:bg-gray-800/40 shadow-md rounded-lg">
+              <h1>Saldo:</h1>
+              <h1>R$ {numberToString(totalEntradas - totalSaidas)}</h1>
+            </div>
+          </div>
           <FinanceForm formSubmit={handleSubmit} />
         </div>
       </div>

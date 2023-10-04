@@ -103,7 +103,7 @@ const FinanceForm: React.FC<FinanceFormProps> = ({ data = {}, formSubmit }) => {
           onChange={(e) => handleValorChange(e.target.value)}
           error={errors?.value?.message}
         />
-        <Input type="date" />
+
         <ToggleSwitch tipo={tipo} register={register} />
 
         <div className="w-full px-1">
@@ -128,6 +128,7 @@ const FinanceForm: React.FC<FinanceFormProps> = ({ data = {}, formSubmit }) => {
             <p className="text-xs text-red-600">{errors?.category?.message}</p>
           )}
         </div>
+        <Input type="date" />
 
         <button
           onClick={handleSubmit(submitForm)}

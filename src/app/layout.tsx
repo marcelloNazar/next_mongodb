@@ -3,6 +3,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Lora, Nunito } from "next/font/google";
 import Header from "@/componets/Header";
+import { FinanceProvider } from "@/context/FinanceContext";
 
 const lora = Lora({
   subsets: ["latin"],
@@ -29,14 +30,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <AuthProvider>
-        <body
-          className={`${lora.variable}${nunito.variable} overflow-y-hidden dark:bg-gray-950 dark:text-zinc-50 `}
-        >
-          <div className="max-w-6xl h-screen mx-auto flex flex-col justify-between">
-            <Header />
-            {children}
-          </div>
-        </body>
+        <FinanceProvider>
+          <body
+            className={`${lora.variable}${nunito.variable} overflow-y-hidden dark:bg-gray-950 dark:text-zinc-50 `}
+          >
+            <div className="max-w-6xl h-screen mx-auto flex flex-col justify-between">
+              <Header />
+              {children}
+            </div>
+          </body>
+        </FinanceProvider>
       </AuthProvider>
     </html>
   );

@@ -4,21 +4,25 @@ import { IFinance } from "@/interfaces/Post";
 import { FinanceResolver } from "@/utils/validators";
 import { useForm } from "react-hook-form";
 import Input from "../Input";
-import {
-  BsGraphDown,
-  BsGraphDownArrow,
-  BsGraphUp,
-  BsGraphUpArrow,
-} from "react-icons/bs";
+
 import ToggleSwitch from "../ToggleSwitch";
+import { useFinance } from "@/context/FinanceContext";
+import Spinner from "../Spinner";
 
 type FinanceFormProps = {
   data?: Partial<IFinance>;
   formSubmit: (data: Partial<IFinance>) => void;
+  nameButton: string;
 };
 
 //Formulario para cadastro de animais
-const FinanceForm: React.FC<FinanceFormProps> = ({ data = {}, formSubmit }) => {
+const FinanceForm: React.FC<FinanceFormProps> = ({
+  data = {},
+  formSubmit,
+  nameButton,
+}) => {
+  const { finance, setFinance, loading, setLoading } = useFinance();
+
   function numberToString(number?: number) {
     const string = number?.toLocaleString("pt-BR", {
       minimumFractionDigits: 2,
@@ -41,15 +45,28 @@ const FinanceForm: React.FC<FinanceFormProps> = ({ data = {}, formSubmit }) => {
   const title = watch("title");
   const category = watch("category");
   const tipo = watch("tipo");
+  const date = watch("date");
   const [valor, setValor] = useState(
     data.value ? data.value.toString().replace(".", ",") : ""
   );
 
-  const handleSetData = (data: Partial<IFinance>) => {
+  const handleSetData = (data: IFinance) => {
     setValue("title", data.title || "");
     setValue("category", data.category || "");
+    if (data.category === "Sem Categoria") {
+      setValue("category", "");
+    }
     setValor(numberToString(data.value) || "");
+    setValue("date", data.date || "");
     setValue("tipo", data.tipo || false);
+  };
+  const handleRemoveData = () => {
+    setValue("title", "");
+    setValue("category", "");
+    setValor("");
+    setValue("date", "");
+    setValue("tipo", false);
+    setFinance(null);
   };
 
   useEffect(() => {
@@ -61,17 +78,46 @@ const FinanceForm: React.FC<FinanceFormProps> = ({ data = {}, formSubmit }) => {
   }, [tipo]);
 
   useEffect(() => {
-    handleSetData(data);
-  }, []);
+    if (finance) {
+      handleSetData(finance);
+    }
+    if (!finance) {
+      handleRemoveData();
+    }
+  }, [finance]);
+
+  const dataAtual = new Date();
 
   const submitForm = (values: IFinance) => {
+    let finalDate;
+    let finalCategory;
+    if (!date) {
+      finalDate = formatarDataParaString(dataAtual);
+    } else {
+      finalDate = date;
+    }
+    if (!category) {
+      finalCategory = "Sem Categoria";
+    } else {
+      finalCategory = category;
+    }
     formSubmit({
       title,
-      category,
+      category: finalCategory,
       tipo: values.tipo,
       value: Number(valor.replace(",", ".")),
+      date: finalDate,
     });
+    handleRemoveData();
   };
+
+  function formatarDataParaString(data: Date): string {
+    const ano = String(data.getFullYear());
+    const mes = String(data.getMonth() + 1).padStart(2, "0"); // Lembre-se de que os meses são base 0
+    const dia = String(data.getDate()).padStart(2, "0");
+
+    return `${ano}-${mes}-${dia}`;
+  }
 
   const handleValorChange = (inputValor: string) => {
     const decimalPart = inputValor.split(",")[1];
@@ -128,14 +174,14 @@ const FinanceForm: React.FC<FinanceFormProps> = ({ data = {}, formSubmit }) => {
             <p className="text-xs text-red-600">{errors?.category?.message}</p>
           )}
         </div>
-        <Input type="date" />
+        <Input type="date" {...register("date")} />
 
         <button
           onClick={handleSubmit(submitForm)}
           type="submit"
           className="btn w-full"
         >
-          Adicionar
+          {loading ? <>Enviando...</> : nameButton}
         </button>
       </form>
     </div>

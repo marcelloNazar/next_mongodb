@@ -32,7 +32,7 @@ export default function RootLayout({
       <AuthProvider>
         <FinanceProvider>
           <body
-            className={`${lora.variable}${nunito.variable} overflow-y-hidden dark:bg-gray-950 dark:text-zinc-50 `}
+            className={`${lora.variable}${nunito.variable} overflow-y-hidden dark:bg-gray-950 text-gray-700 dark:text-gray-400 `}
           >
             <div className="max-w-6xl h-screen mx-auto flex flex-col justify-between">
               <Header />

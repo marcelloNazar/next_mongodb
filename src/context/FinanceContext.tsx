@@ -13,6 +13,12 @@ interface FinanceContextType {
   setMonth: (month: string) => void;
   day: string;
   setDay: (day: string) => void;
+  category: string;
+  setCategory: (day: string) => void;
+  tipo: boolean | null;
+  setTipo: (day: boolean | null) => void;
+  ordenacao: string;
+  setOrdenacao: (day: string) => void;
 }
 
 interface Props {
@@ -30,6 +36,12 @@ export const FinanceContext = createContext<FinanceContextType>({
   setMonth: () => {}, // Função para atualizar month
   day: "", // Valor inicial do estado day
   setDay: () => {}, // Função para atualizar day
+  category: "", // Valor inicial do estado day
+  setCategory: () => {}, // Função para atualizar day
+  ordenacao: "", // Valor inicial do estado day
+  setOrdenacao: () => {}, // Função para atualizar day
+  tipo: false, // Valor inicial do estado day
+  setTipo: () => {}, // Função para atualizar day
 });
 
 export const FinanceProvider: React.FC<Props> = ({ children }) => {
@@ -43,6 +55,9 @@ export const FinanceProvider: React.FC<Props> = ({ children }) => {
   const [year, setYear] = useState<string>(currentYear);
   const [month, setMonth] = useState<string>(currentMonth);
   const [day, setDay] = useState<string>("");
+  const [category, setCategory] = useState<string>("");
+  const [tipo, setTipo] = useState<boolean | null>(null);
+  const [ordenacao, setOrdenacao] = useState("dataCrescente");
 
   return (
     <FinanceContext.Provider
@@ -57,6 +72,12 @@ export const FinanceProvider: React.FC<Props> = ({ children }) => {
         setMonth,
         day,
         setDay,
+        category,
+        setCategory,
+        tipo,
+        setTipo,
+        ordenacao,
+        setOrdenacao,
       }}
     >
       {children}

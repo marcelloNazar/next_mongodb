@@ -6,10 +6,11 @@ import { IFinance } from "@/interfaces/Post";
 import { useRouter } from "next/navigation";
 import FinanceForm from "@/componets/forms/FinanceForm";
 import Spinner from "@/componets/Spinner";
-import { BsGraphDownArrow, BsGraphUpArrow } from "react-icons/bs";
+import { BsGraphDownArrow, BsGraphUpArrow, BsListUl } from "react-icons/bs";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 import { useFinance } from "@/context/FinanceContext";
 import Input from "@/componets/Input";
+import ToggleSwitch from "@/componets/ToggleSwitch";
 
 export default function Dashboard({ params }: any) {
   const {
@@ -23,6 +24,12 @@ export default function Dashboard({ params }: any) {
     setMonth,
     day,
     setDay,
+    category,
+    setCategory,
+    tipo,
+    setTipo,
+    ordenacao,
+    setOrdenacao,
   } = useFinance();
   const session = useSession();
   console.log(session);
@@ -197,55 +204,76 @@ export default function Dashboard({ params }: any) {
               </tr>
             </thead>
             <tbody>
-              {data?.map((teste: IFinance) => (
-                <tr
-                  key={teste._id}
-                  className="border-b border-gray-200 dark:border-gray-700"
-                >
-                  <th
-                    scope="row"
-                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50 dark:text-white dark:bg-gray-800/40"
+              {data
+                ?.filter((finance: IFinance) =>
+                  finance.category
+                    .toLowerCase()
+                    .includes(category.toLowerCase())
+                )
+                .filter(
+                  (finance: IFinance) => tipo === null || finance.tipo === tipo
+                )
+                .sort((a: IFinance, b: IFinance) => {
+                  if (ordenacao === "valorCrescente") {
+                    // Ordene pelo valor de forma crescente
+                    return a.value - b.value;
+                  } else if (ordenacao === "valorDecrescente") {
+                    // Ordene pelo valor de forma decrescente
+                    return b.value - a.value;
+                  } else {
+                    // Por padrão, ordene pela data de forma crescente
+                    return a.date.localeCompare(b.date);
+                  }
+                })
+                .map((teste: IFinance) => (
+                  <tr
+                    key={teste._id}
+                    className="border-b border-gray-200 dark:border-gray-700"
                   >
-                    {teste.title.length > 27
-                      ? teste.title.substring(0, 27) + "..."
-                      : teste.title}
-                  </th>
-                  <td className="px-6 py-4 justify-center">
-                    {teste.tipo ? (
-                      <div className="flex justify-center w-full font-bold text-xl text-green-600">
-                        <BsGraphUpArrow />
+                    <th
+                      scope="row"
+                      className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50 dark:text-white dark:bg-gray-800/40"
+                    >
+                      {teste.title.length > 27
+                        ? teste.title.substring(0, 27) + "..."
+                        : teste.title}
+                    </th>
+                    <td className="px-6 py-4 justify-center">
+                      {teste.tipo ? (
+                        <div className="flex justify-center w-full font-bold text-xl text-green-600">
+                          <BsGraphUpArrow />
+                        </div>
+                      ) : (
+                        <div className="flex justify-center w-full font-bold text-xl text-red-600">
+                          <BsGraphDownArrow />
+                        </div>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 bg-gray-50 dark:bg-gray-800/40">
+                      {converterDataParaDDMMYY(teste.date)}
+                    </td>
+                    <td className="px-6 py-4">{teste.category}</td>
+                    <td className="px-6 py-4 bg-gray-50 dark:bg-gray-800/40">
+                      R$ {numberToString(teste.value)}
+                    </td>
+                    <td className="px-6 py-4 ">
+                      <div className="flex justify-center w-full font-bold text-xl gap-1">
+                        <button
+                          className=" hover:text-indigo-600"
+                          onClick={() => setFinance(teste)}
+                        >
+                          <AiFillEdit />
+                        </button>
+                        <button
+                          className=" hover:text-red-600"
+                          onClick={() => handleDelete(teste._id)}
+                        >
+                          <AiFillDelete />
+                        </button>
                       </div>
-                    ) : (
-                      <div className="flex justify-center w-full font-bold text-xl text-red-600">
-                        <BsGraphDownArrow />
-                      </div>
-                    )}
-                  </td>
-                  <td className="px-6 py-4 bg-gray-50 dark:bg-gray-800/40">
-                    {converterDataParaDDMMYY(teste.date)}
-                  </td>
-                  <td className="px-6 py-4">{teste.category}</td>
-                  <td className="px-6 py-4 bg-gray-50 dark:bg-gray-800/40">
-                    R$ {numberToString(teste.value)}
-                  </td>
-                  <td className="px-6 py-4 ">
-                    <div className="flex justify-center w-full font-bold text-xl gap-1">
-                      <button
-                        className=" hover:text-indigo-600"
-                        onClick={() => setFinance(teste)}
-                      >
-                        <AiFillEdit />
-                      </button>
-                      <button
-                        className=" hover:text-red-600"
-                        onClick={() => handleDelete(teste._id)}
-                      >
-                        <AiFillDelete />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                  </tr>
+                ))}
             </tbody>
             <tfoot className="h-full rounded-md">
               <tr className="font-semibold text-gray-900 dark:text-white">
@@ -262,9 +290,30 @@ export default function Dashboard({ params }: any) {
           {" "}
           <div
             onClick={() => setFinance(null)}
-            className="flex justify-center items-center flex-col w-full h-full bg-gray-50 dark:bg-gray-800/40 shadow-md rounded-tr-lg"
+            className="flex text-xs  justify-start p-2 pt-3 gap-1 items-center flex-col flex-1 bg-gray-50 dark:bg-gray-800/40 shadow-md rounded-tr-lg"
           >
-            <div className="flex">
+            <p className="font-semibold">ORDEM / FILTRO</p>
+            <div className="flex w-full gap-1 my-0.5">
+              <button
+                className="black-button flex items-center justify-center "
+                onClick={() => setOrdenacao("valorDecrescente")}
+              >
+                Decresc.
+              </button>
+              <button
+                className="black-button flex items-center justify-center "
+                onClick={() => setOrdenacao("valorCrescente")}
+              >
+                Cresc.
+              </button>
+              <button
+                className="black-button flex  items-center justify-center ordenacao === 'dataCrescente' ? 'dark:bg-blue-600 text-white' : ''"
+                onClick={() => setOrdenacao("dataCrescente")}
+              >
+                Data
+              </button>
+            </div>
+            <div className="flex w-full gap-1">
               <select
                 className="input"
                 value={year}
@@ -292,6 +341,47 @@ export default function Dashboard({ params }: any) {
                 <option value="12">Dezembro</option>
               </select>
             </div>
+            <div className="flex w-full gap-1 my-0.5">
+              <button
+                className="black-button flex text-blue-600 items-center justify-center text-xl font-extrabold"
+                onClick={() => setTipo(null)}
+              >
+                <BsListUl />
+              </button>
+              <button
+                className="black-button flex text-green-600 items-center justify-center text-xl font-extrabold"
+                onClick={() => setTipo(true)}
+              >
+                <BsGraphUpArrow />
+              </button>
+              <button
+                className="black-button flex text-red-600 items-center justify-center text-xl font-extrabold"
+                onClick={() => setTipo(false)}
+              >
+                <BsGraphDownArrow />
+              </button>
+            </div>
+            <div className="w-full">
+              <select
+                className="input"
+                onChange={(e) => setCategory(e.target.value)}
+              >
+                <option value="" className="dark:text-gray-600">
+                  Categoria
+                </option>
+
+                <>
+                  <option value="Salario">Salario</option>
+                  <option value="Freelancer">Freelancer</option>
+                </>
+
+                <>
+                  {" "}
+                  <option value="Alimentação">Alimentação</option>
+                  <option value="Gasolina">Gasolina</option>
+                </>
+              </select>
+            </div>
           </div>
           {finance ? (
             <FinanceForm
@@ -302,7 +392,7 @@ export default function Dashboard({ params }: any) {
           ) : (
             <FinanceForm formSubmit={handleSubmit} nameButton="Adicionar" />
           )}
-          <div className="flex flex-col h-full w-full">
+          <div className="flex flex-col h-1/4 w-full">
             <div className="flex justify-between p-4 items-center w-full h-1/3 bg-gray-50 dark:bg-gray-800/40 shadow-md ">
               <h1>Receitas:</h1>
               <h1>R$ {numberToString(totalEntradas)}</h1>

@@ -8,6 +8,7 @@ import Input from "../Input";
 import ToggleSwitch from "../ToggleSwitch";
 import { useFinance } from "@/context/FinanceContext";
 import Spinner from "../Spinner";
+import { BsGraphDownArrow, BsGraphUpArrow } from "react-icons/bs";
 
 type FinanceFormProps = {
   data?: Partial<IFinance>;
@@ -150,7 +151,28 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
           error={errors?.value?.message}
         />
 
-        <ToggleSwitch tipo={tipo} register={register} />
+        <div className="flex w-full p-1 justify-center gap-4 items-center">
+          <div className="flex justify-end items-end w-full font-bold text-3xl text-red-600">
+            {!tipo ? <BsGraphDownArrow /> : <></>}
+          </div>
+
+          <label
+            htmlFor="toggle-switch"
+            className="flex items-center justify-center"
+          >
+            <input
+              type="checkbox"
+              id="toggle-switch"
+              {...register("tipo")} // Use o registro diretamente aqui
+              defaultChecked={tipo} // Defina o estado inicial com base em 'tipo'
+              className="cursor-pointer h-8 w-16 rounded-full appearance-none bg-white bg-opacity-5 border-2 border-red-600 checked:border-green-600 checked:bg-gray-600 transition duration-200 relative"
+            />
+          </label>
+
+          <div className="flex justify-start items-center w-full font-bold text-3xl text-green-600">
+            {tipo ? <BsGraphUpArrow /> : <></>}
+          </div>
+        </div>
 
         <div className="w-full px-1">
           <select className="input" {...register("category")}>

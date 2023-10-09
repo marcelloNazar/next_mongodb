@@ -4,8 +4,10 @@ import Link from "next/link";
 import React from "react";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
+import { AiOutlineCaretDown, AiOutlineCaretUp } from "react-icons/ai";
 
 export default function Header() {
+  const [isOpen, setIsOpen] = React.useState(false);
   const links = [
     {
       id: 1,
@@ -26,24 +28,12 @@ export default function Header() {
   ];
   const session = useSession();
   const username = session.data?.user?.name;
+  const firstName = username?.split(" ")[0];
   const imageUrl = session.data?.user?.image;
 
   return (
     <div className="flex bg-blue-500 w-full py-2 justify-between items-center">
-      {session.data?.user ? (
-        <Link href="/" className="font-bold text-xl flex gap-2">
-          <Image
-            className="rounded-lg"
-            src={imageUrl!}
-            alt="Descrição da imagem"
-            width={30} // Largura da imagem em pixels
-            height={30} // Altura da imagem em pixels
-          />
-          {username}
-        </Link>
-      ) : (
-        <>Playgrownd</>
-      )}
+      <>Playgrownd</>
 
       <div className="flex items-center gap-4">
         {links.map((link) => (
@@ -52,9 +42,45 @@ export default function Header() {
           </Link>
         ))}
         {session.status === "authenticated" && (
-          <button className="btn" onClick={() => signOut()}>
-            logout
-          </button>
+          <div className="flex flex-col items-center">
+            <button
+              className="flex items-center rounded-full border-2 border-transparent active:border-gray-200 duration-200 "
+              onClick={() => setIsOpen(!isOpen)}
+            >
+              <Image
+                className="rounded-full"
+                src={imageUrl!}
+                alt="Descrição da imagem"
+                width={36} // Largura da imagem em pixels
+                height={36} // Altura da imagem em pixels
+              />
+              {!isOpen ? <AiOutlineCaretDown /> : <AiOutlineCaretUp />}
+            </button>
+            {isOpen && (
+              <div className="flex absolute justify-end mr-20 mt-12">
+                <div className="flex flex-col w-32 h-52 rounded-lg p-2 border bg-gray-50 dark:bg-gray-950">
+                  <div className="flex flex-col justify-center h-full gap-4 border-b mb-2">
+                    <div className="flex justify-center">
+                      <Image
+                        className="rounded-full"
+                        src={imageUrl!}
+                        alt="Descrição da imagem"
+                        width={70} // Largura da imagem em pixels
+                        height={70} // Altura da imagem em pixels
+                      />
+                    </div>
+                    <div className="flex justify-center">Olá, {firstName}!</div>
+                  </div>
+                  <button
+                    className="hover:text-white"
+                    onClick={() => signOut()}
+                  >
+                    Sair
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         )}
       </div>
     </div>

@@ -1,7 +1,6 @@
 "use client";
 import useSWR from "swr";
 import { signOut, useSession } from "next-auth/react";
-import { fetchFinanceOnClient } from "../../utils/api";
 import { IFinance } from "@/interfaces/Post";
 import { useRouter } from "next/navigation";
 import FinanceForm from "@/componets/forms/FinanceForm";

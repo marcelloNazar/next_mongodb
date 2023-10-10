@@ -1,37 +1,3 @@
-import useSWR from "swr";
-
-export function fetchOnClient(username: string) {
-  const fetcher = (...args: Parameters<typeof fetch>) =>
-    fetch(...args).then((res) => res.json());
-
-  const { data, mutate, error, isLoading } = useSWR(
-    `http://localhost:3000/api/posts?username=${username}`,
-    fetcher
-  );
-  return {
-    data,
-    mutate,
-    error,
-    isLoading,
-  };
-}
-
-export function fetchFinanceOnClient(username: string) {
-  const fetcher = (...args: Parameters<typeof fetch>) =>
-    fetch(...args).then((res) => res.json());
-
-  const { data, mutate, error, isLoading } = useSWR(
-    `http://localhost:3000/api/finances?username=${username}`,
-    fetcher
-  );
-  return {
-    data,
-    mutate,
-    error,
-    isLoading,
-  };
-}
-
 export async function fetchTeste() {
   const res = await fetch("http://localhost:3000/api/posts", {
     cache: "no-cache",

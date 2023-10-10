@@ -22,12 +22,12 @@ const Login = ({ url }: any) => {
   }
 
   if (session.status === "authenticated") {
-    router?.push("/finances");
+    router?.push("/");
   }
 
   return (
     <div className="flex flex-col h-screen justify-center gap-2 items-center">
-      <div className="flex flex-col w-full max-w-md px-4 py-8 bg-white rounded-lg shadow sm:px-6 md:px-8 lg:px-10">
+      <div className="flex flex-col w-full max-w-md px-4 py-8 bg-gray-200 dark:bg-gray-800/50 rounded-lg shadow sm:px-6 md:px-8 lg:px-10">
         <div className="self-center mb-6 text-xl font-light text-gray-600 sm:text-2xl ">
           Fazer Login Social
         </div>

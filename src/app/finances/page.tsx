@@ -286,11 +286,11 @@ export default function Dashboard({ params }: any) {
             </tfoot>
           </table>
         </div>
-        <div className="flex flex-col h-[100%] gap-2 w-1/3">
+        <div className="flex flex-row lg:flex-col h-[25%] lg:h-[100%] gap-2 w-full lg:w-1/3">
           {" "}
           <div
             onClick={() => setFinance(null)}
-            className="flex text-xs  justify-start p-2 pt-3 gap-1 items-center flex-col flex-1 bg-gray-50 dark:bg-gray-800/40 shadow-md rounded-tr-lg"
+            className="flex text-xs justify-start p-2 pt-3 gap-1 items-center flex-col w-[27%] lg:w-full bg-gray-50 dark:bg-gray-800/40 shadow-md rounded-tl-lg lg:rounded-tl-none  lg:rounded-tr-lg"
           >
             <p className="font-semibold">ORDEM / FILTRO</p>
             <div className="flex w-full gap-1 my-0.5">
@@ -383,17 +383,19 @@ export default function Dashboard({ params }: any) {
               </select>
             </div>
           </div>
-          {finance ? (
-            <FinanceForm
-              formSubmit={handleUpdate}
-              data={finance}
-              nameButton="Editar"
-            />
-          ) : (
-            <FinanceForm formSubmit={handleSubmit} nameButton="Adicionar" />
-          )}
-          <div className="flex flex-col h-1/4 w-full">
-            <div className="flex justify-between p-4 items-center w-full h-1/3 bg-gray-50 dark:bg-gray-800/40 shadow-md ">
+          <div className="flex w-5/12">
+            {finance ? (
+              <FinanceForm
+                formSubmit={handleUpdate}
+                data={finance}
+                nameButton="Editar"
+              />
+            ) : (
+              <FinanceForm formSubmit={handleSubmit} nameButton="Adicionar" />
+            )}
+          </div>
+          <div className="flex flex-col h-3/12 lg:h-1/4 lg:w-full mr-0.5">
+            <div className="flex justify-between p-4 items-center w-full h-1/3 bg-gray-50 dark:bg-gray-800/40 shadow-md rounded-tr-lg lg:rounded-none">
               <h1>Receitas:</h1>
               <h1>R$ {numberToString(totalEntradas)}</h1>
             </div>
@@ -402,7 +404,7 @@ export default function Dashboard({ params }: any) {
               <h1>Despesas:</h1>
               <h1>R$ {numberToString(totalSaidas)}</h1>
             </div>
-            <div className="flex justify-between p-4 items-center w-full h-1/3 bg-gray-50 dark:bg-gray-800/40 shadow-md rounded-br-lg">
+            <div className="flex justify-between p-4 items-center w-full h-1/3 bg-gray-50 dark:bg-gray-800/40 shadow-md lg:rounded-br-lg">
               <h1>Saldo:</h1>
               <h1>R$ {numberToString(totalEntradas - totalSaidas)}</h1>
             </div>

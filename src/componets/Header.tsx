@@ -14,17 +14,6 @@ export default function Header() {
       title: "Home",
       url: "/",
     },
-    {
-      id: 2,
-      title: "Financeiro",
-      url: "/finances",
-    },
-
-    {
-      id: 3,
-      title: "Dashboard",
-      url: "/dashboard",
-    },
   ];
   const session = useSession();
   const username = session.data?.user?.name;
@@ -33,9 +22,9 @@ export default function Header() {
 
   return (
     <div className="flex bg-blue-500 w-full py-2 justify-between items-center">
-      <>Playgrownd</>
+      <>Controle Finaceiro</>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 hover:text-green-600">
         {links.map((link) => (
           <Link key={link.id} href={link.url} className="">
             {link.title}

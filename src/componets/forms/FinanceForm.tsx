@@ -98,7 +98,7 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
       finalDate = date;
     }
     if (!category) {
-      finalCategory = "Sem Categoria";
+      finalCategory = "-";
     } else {
       finalCategory = category;
     }
@@ -133,71 +133,76 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit(submitForm)} className="flex flex-col gap-2">
+    <div className="flex w-full">
+      <form
+        onSubmit={handleSubmit(submitForm)}
+        className="flex w-full flex-col gap-1"
+      >
         <Input
           type="text"
           {...register("title")}
           placeholder="Titulo"
           error={errors?.title?.message}
         />
+        <div className="flex w-full flex-row lg:flex-col gap-1 justify-center items-center">
+          <Input
+            type="text"
+            {...register("value")}
+            placeholder="Valor"
+            value={valor}
+            onChange={(e) => handleValorChange(e.target.value)}
+            error={errors?.value?.message}
+          />
 
-        <Input
-          type="text"
-          {...register("value")}
-          placeholder="Valor"
-          value={valor}
-          onChange={(e) => handleValorChange(e.target.value)}
-          error={errors?.value?.message}
-        />
+          <div className="flex w-full p-1 justify-center gap-2 items-center">
+            <div className="flex justify-end items-end w-full font-bold text-3xl text-red-600">
+              {!tipo ? <BsGraphDownArrow /> : <></>}
+            </div>
+            <label
+              htmlFor="toggle-switch"
+              className="flex items-center justify-center"
+            >
+              <input
+                type="checkbox"
+                id="toggle-switch"
+                {...register("tipo")} // Use o registro diretamente aqui
+                defaultChecked={tipo} // Defina o estado inicial com base em 'tipo'
+                className="cursor-pointer h-8 w-16 rounded-full appearance-none bg-white bg-opacity-5 border-2 border-red-600 checked:border-green-600 checked:bg-gray-600 transition duration-200 relative"
+              />
+            </label>
 
-        <div className="flex w-full p-1 justify-center gap-4 items-center">
-          <div className="flex justify-end items-end w-full font-bold text-3xl text-red-600">
-            {!tipo ? <BsGraphDownArrow /> : <></>}
-          </div>
-
-          <label
-            htmlFor="toggle-switch"
-            className="flex items-center justify-center"
-          >
-            <input
-              type="checkbox"
-              id="toggle-switch"
-              {...register("tipo")} // Use o registro diretamente aqui
-              defaultChecked={tipo} // Defina o estado inicial com base em 'tipo'
-              className="cursor-pointer h-8 w-16 rounded-full appearance-none bg-white bg-opacity-5 border-2 border-red-600 checked:border-green-600 checked:bg-gray-600 transition duration-200 relative"
-            />
-          </label>
-
-          <div className="flex justify-start items-center w-full font-bold text-3xl text-green-600">
-            {tipo ? <BsGraphUpArrow /> : <></>}
+            <div className="flex justify-start items-center w-full font-bold text-3xl text-green-600">
+              {tipo ? <BsGraphUpArrow /> : <></>}
+            </div>
           </div>
         </div>
-
-        <div className="w-full px-1">
-          <select className="input" {...register("category")}>
-            <option value="" className="dark:text-gray-600">
-              Categoria
-            </option>
-            {tipo ? (
-              <>
-                <option value="Salario">Salario</option>
-                <option value="Freelancer">Freelancer</option>
-              </>
-            ) : (
-              <>
-                {" "}
-                <option value="Alimentação">Alimentação</option>
-                <option value="Gasolina">Gasolina</option>
-              </>
+        <div className="flex w-full flex-row lg:flex-col justify-center gap-1 items-center">
+          <div className="w-full px-1">
+            <select className="input" {...register("category")}>
+              <option value="" className="dark:text-gray-600">
+                Categoria
+              </option>
+              {tipo ? (
+                <>
+                  <option value="Salario">Salario</option>
+                  <option value="Freelancer">Freelancer</option>
+                </>
+              ) : (
+                <>
+                  {" "}
+                  <option value="Alimentação">Alimentação</option>
+                  <option value="Gasolina">Gasolina</option>
+                </>
+              )}
+            </select>
+            {errors?.category?.message && (
+              <p className="text-xs text-red-600">
+                {errors?.category?.message}
+              </p>
             )}
-          </select>
-          {errors?.category?.message && (
-            <p className="text-xs text-red-600">{errors?.category?.message}</p>
-          )}
+          </div>
+          <Input type="date" {...register("date")} />
         </div>
-        <Input type="date" {...register("date")} />
-
         <button
           onClick={handleSubmit(submitForm)}
           type="submit"
